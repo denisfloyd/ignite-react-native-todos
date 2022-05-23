@@ -21,8 +21,8 @@ interface TasksListProps {
 export function TasksList({ tasks, toggleTaskDone, removeTask }: TasksListProps) {
   return (
     <FlatList
-      // data={tasks}
-      keyExtractor={item => String(item.id)}
+      data={tasks}
+      keyExtractor={(item) => String(item.id)}
       contentContainerStyle={{ paddingBottom: 24 }}
       showsVerticalScrollIndicator={false}
       renderItem={({ item, index }) => {
@@ -35,21 +35,12 @@ export function TasksList({ tasks, toggleTaskDone, removeTask }: TasksListProps)
                 style={styles.taskButton}
                 //TODO - use onPress (toggle task) prop
               >
-                <View 
-                  testID={`marker-${index}`}
-                  //TODO - use style prop 
-                >
-                  { item.done && (
-                    <Icon 
-                      name="check"
-                      size={12}
-                      color="#FFF"
-                    />
-                  )}
+                <View testID={`marker-${index}`} style={styles.taskMarker}>
+                  {item.done && <Icon name="check" size={12} color="#FFF" />}
                 </View>
 
-                <Text 
-                  //TODO - use style prop
+                <Text
+                //TODO - use style prop
                 >
                   {item.title}
                 </Text>
@@ -64,13 +55,13 @@ export function TasksList({ tasks, toggleTaskDone, removeTask }: TasksListProps)
               <Image source={trashIcon} />
             </TouchableOpacity>
           </ItemWrapper>
-        )
+        );
       }}
       style={{
-        marginTop: 32
+        marginTop: 32,
       }}
     />
-  )
+  );
 }
 
 const styles = StyleSheet.create({
