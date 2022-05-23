@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from "react-native";
 
 import { Header } from '../components/Header';
 import { Task, TasksList } from '../components/TasksList';
@@ -19,7 +19,16 @@ export function Home() {
   }
 
   function handleToggleTaskDone(id: number) {
-    //TODO - toggle task done if exists
+    const updatedTasks = [...tasks];
+    const taskToUpdate = updatedTasks.find((task) => task.id === id);
+
+    if (!taskToUpdate) {
+      Alert.alert("Task no found", "Please select a task");
+      return;
+    }
+
+    taskToUpdate.done = !taskToUpdate.done;
+    setTasks(updatedTasks);
   }
 
   function handleRemoveTask(id: number) {

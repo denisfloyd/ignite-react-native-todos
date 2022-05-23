@@ -13,7 +13,7 @@ export function TodoInput({ addTask }: TodoInputProps) {
     if(task && task.length > 0) {
       addTask(task);
     } else {
-      Alert.alert('Empty Skill', 'Please type some skill to add to the list.');
+      Alert.alert("Empty task", "Please type some task to add to the list.");
     }
   }
 
