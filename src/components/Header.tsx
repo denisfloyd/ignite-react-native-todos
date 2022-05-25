@@ -11,10 +11,10 @@ interface HeaderProps {
 export function Header({ tasksCounter }: HeaderProps) {
   const tasksCounterText: string = useMemo(() => {
     if (tasksCounter === 1) {
-      return `${tasksCounter} tarefa`;
+      return 'tarefa';
     }
 
-    return `${tasksCounter} tarefas`;
+    return 'tarefas';
   }, [tasksCounter]);
 
   return (
@@ -24,7 +24,7 @@ export function Header({ tasksCounter }: HeaderProps) {
       <View style={styles.tasks}>
         <Text style={styles.tasksCounter}>Você tem </Text>
         <Text style={styles.tasksCounterBold}>
-          {tasksCounterText}
+          {tasksCounter} {tasksCounterText}
         </Text>
       </View>
     </View>
