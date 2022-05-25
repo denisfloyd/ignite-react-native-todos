@@ -9,6 +9,17 @@ export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   function handleAddTask(newTaskTitle: string) {
+    const checkIfTaskEXists = tasks.findIndex(
+      (task) => task.title === newTaskTitle
+    );
+
+    if (checkIfTaskEXists !== -1) {
+      return Alert.alert(
+        "Task já cadastrada",
+        "Você não pode cadastrar uma task com o mesmo nome"
+      );
+    }
+
     const newTask: Task = {
       id: new Date().getTime(),
       title: newTaskTitle,
@@ -32,7 +43,20 @@ export function Home() {
   }
 
   function handleRemoveTask(id: number) {
-    setTasks(tasks.filter((tasksFilteres) => tasksFilteres.id !== id));
+    Alert.alert(
+      "Remover item",
+      "Tem certeza que você deseja remover esse item?",
+      [
+        {
+          text: "Não",
+        },
+        {
+          text: "Sim",
+          onPress: () =>
+            setTasks(tasks.filter((tasksFilteres) => tasksFilteres.id !== id)),
+        },
+      ]
+    );
   }
 
   return (
