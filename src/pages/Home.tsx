@@ -15,8 +15,8 @@ export function Home() {
 
     if (checkIfTaskEXists !== -1) {
       return Alert.alert(
-        "Task já cadastrada",
-        "Você não pode cadastrar uma task com o mesmo nome"
+        "Task already exists",
+        `You can't add a task with title ${newTaskTitle}`
       );
     }
 
@@ -29,7 +29,7 @@ export function Home() {
     setTasks([...tasks, newTask]);
   }
 
-  function handleToggleTaskDone(id: number) {
+  function handleToogleTaskDone(id: number) {
     const updatedTasks = [...tasks];
     const taskToUpdate = updatedTasks.find((task) => task.id === id);
 
@@ -43,20 +43,29 @@ export function Home() {
   }
 
   function handleRemoveTask(id: number) {
-    Alert.alert(
-      "Remover item",
-      "Tem certeza que você deseja remover esse item?",
-      [
-        {
-          text: "Não",
-        },
-        {
-          text: "Sim",
-          onPress: () =>
-            setTasks(tasks.filter((tasksFilteres) => tasksFilteres.id !== id)),
-        },
-      ]
-    );
+    Alert.alert("Remove task", "Would you like to remove the task ?", [
+      {
+        text: "No",
+      },
+      {
+        text: "Yes",
+        onPress: () =>
+          setTasks(tasks.filter((tasksFilteres) => tasksFilteres.id !== id)),
+      },
+    ]);
+  }
+
+  function handleEditTask(taskId: number, taskNewTitle: string) {
+    const updatedTasks = [...tasks];
+    const taskToUpdate = updatedTasks.find((task) => task.id === taskId);
+
+    if (!taskToUpdate) {
+      Alert.alert("Task no found", "Please select a task");
+      return;
+    }
+
+    taskToUpdate.title = taskNewTitle;
+    setTasks(updatedTasks);
   }
 
   return (
@@ -65,13 +74,14 @@ export function Home() {
 
       <TodoInput addTask={handleAddTask} />
 
-      <TasksList 
-        tasks={tasks} 
-        toggleTaskDone={handleToggleTaskDone}
-        removeTask={handleRemoveTask} 
+      <TasksList
+        tasks={tasks}
+        toggleTaskDone={handleToogleTaskDone}
+        removeTask={handleRemoveTask}
+        editTask={handleEditTask}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
