@@ -1,8 +1,17 @@
-import React from "react";
-import { Image, TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Image,
+  TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Alert,
+} from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 import trashIcon from "../assets/icons/trash/trash.png";
+import editIcon from "../assets/icons/edit/edit.png";
 
 export interface Task {
   id: number;
@@ -12,7 +21,7 @@ export interface Task {
 
 interface TaskItemProps {
   index: number;
-  item: Task;
+  task: Task;
   toggleTaskDone: (id: number) => void;
   removeTask: (idTask: number) => void;
   editTask: (idTask: number, newTaskTitle: string) => void;
@@ -20,11 +29,38 @@ interface TaskItemProps {
 
 export const TaskItem: React.FC<TaskItemProps> = ({
   index,
-  item,
+  task,
   toggleTaskDone,
   removeTask,
   editTask,
 }) => {
+  const [isEditing, setEditing] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState(task.title);
+  const textInputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (textInputRef.current) {
+      if (isEditing) {
+        textInputRef.current.focus();
+      } else {
+        textInputRef.current.blur();
+      }
+    }
+  }, [isEditing]);
+
+  const handleSubmitEditing = () => {
+    if (newTaskTitle && newTaskTitle.length > 0) {
+      editTask(task.id, String(newTaskTitle));
+    }
+
+    setEditing((state) => !state);
+  };
+
+  const handleCancelEditing = () => {
+    setEditing((state) => !state);
+    setNewTaskTitle(task.title);
+  };
+
   return (
     <>
       <View>
@@ -32,28 +68,46 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           testID={`button-${index}`}
           activeOpacity={0.7}
           style={styles.taskButton}
-          onPress={() => toggleTaskDone(item.id)}
+          onPress={() => toggleTaskDone(task.id)}
         >
           <View
             testID={`marker-${index}`}
-            style={item.done ? styles.taskMarkerDone : styles.taskMarker}
+            style={task.done ? styles.taskMarkerDone : styles.taskMarker}
           >
-            {item.done && <Icon name="check" size={12} color="#FFF" />}
+            {task.done && <Icon name="check" size={12} color="#FFF" />}
           </View>
 
-          <Text style={item.done ? styles.taskTextDone : styles.taskText}>
-            {item.title}
-          </Text>
+          <TextInput
+            ref={textInputRef}
+            style={task.done ? styles.taskTextDone : styles.taskText}
+            value={newTaskTitle}
+            editable={isEditing}
+            onChangeText={setNewTaskTitle}
+            onSubmitEditing={handleSubmitEditing}
+          />
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        testID={`trash-${index}`}
-        style={{ paddingHorizontal: 24 }}
-        onPress={() => removeTask(item.id)}
-      >
-        <Image source={trashIcon} />
-      </TouchableOpacity>
+      <View style={styles.iconsContainer}>
+        {isEditing ? (
+          <TouchableOpacity onPress={handleCancelEditing}>
+            <Icon name="x" size={24} color="#b2b2b2" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => setEditing((state) => !state)}>
+            <Image source={editIcon} />
+          </TouchableOpacity>
+        )}
+
+        <View style={styles.iconsDivider} />
+
+        <TouchableOpacity
+          disabled={isEditing}
+          onPress={() => removeTask(task.id)}
+        >
+          <Image source={trashIcon} style={{ opacity: isEditing ? 0.2 : 1 }} />
+        </TouchableOpacity>
+      </View>
     </>
   );
 };
@@ -95,5 +149,17 @@ const styles = StyleSheet.create({
     color: "#1DB863",
     textDecorationLine: "line-through",
     fontFamily: "Inter-Medium",
+  },
+  iconsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    paddingHorizontal: 24,
+  },
+  iconsDivider: {
+    width: 1,
+    height: 24,
+    backgroundColor: "rgba(196, 196, 196, 0.24)",
+    marginHorizontal: 12,
   },
 });
