@@ -69,6 +69,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           activeOpacity={0.7}
           style={styles.taskButton}
           onPress={() => toggleTaskDone(task.id)}
+          disabled={isEditing}
         >
           <View
             testID={`marker-${index}`}
